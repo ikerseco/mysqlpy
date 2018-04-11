@@ -1,5 +1,6 @@
 import pymysql.cursors
 import json
+from m_arr.array_explo import explot
 """
 print("Zure datubasera konektatzen:\n")
 dbi = input("\t*jarri zure databasearen izena:")
@@ -64,20 +65,32 @@ class data_base(object):
             sql_co = "describe " + izena
             cursor.execute(sql_co) 
             result = cursor.fetchall()
-            return result   
+            return result 
+
+    def select_t(self,data):
+        with self.conec.cursor() as cursor:
+            sql_co = "select * from "+ data
+            cursor.execute(sql_co) 
+            result = cursor.fetchall()
+            return result
     
     def create_t(self,datuak,t_izena):
         with self.conec.cursor() as cursor:
             try:
-                print(self.db)
-                print(datuak)
-                print(t_izena)
                 data = "CREATE TABLE "+t_izena+ "( " + datuak + ") ENGINE = InnoDB;"
                 print(data)
                 cursor.execute(data)
                 return("zure tabla sortu egin da zorionak!!!")
             except ValueError:               
                 return("arazo bat egon da zure tabla sortzean!!!")
+   
+    def delete_t(self,datuak):
+        with self.conec.cursor() as cursor:
+            try:
+             data =  "DROP TABLE IF EXISTS " + datuak
+             cursor.execute(data)
+            except ValueError:
+             print("datu basearekin arazo bat dago.")
 
 #json
 data = [{'izena':'name','Funtzioa':''},{'izena':'atributoa','Funtzioa':''},{'izena':'NUll','Funtzioa':''},{'izena':'DEFAULT','Funtzioa':''}]
@@ -93,14 +106,13 @@ def Null(izen):
 def defektuzko(izen):
     if izen == "1":
       di = input("PERTSONALA:")
-      data[3]['valioa'] = "bai"
       return di
     if izen == "2":
-      data[3]['valioa'] = "bai"
       return "CURRENT_TIMESTAMP"
 
-
-
+pata = "dwd,dwd,wdd"
+array = explot(pata,",")
+print(array.arry())
 #programa
 print("Zure datubasera konektatzen:\n")
 db = input("\t*jarri zure databasearen izena:")
@@ -116,6 +128,7 @@ while True:
  for x in range(len(tabla_s)):
      print("\t",x,".",tabla_s[x]['Tables_in_python'])
  print("\t",len(tabla_s),".tabla bat sortu")
+ print("\t",len(tabla_s) + 1,".tabla bat ezabatu")
  zent = input("haukeratu tabla bat:")
  #tabla bat sortzeko gauzak
  print("\n")
@@ -168,11 +181,22 @@ while True:
       print("zutabeak:")
       print(pry)
       zu_name = input("zutabearen izena:")
+      zutabeak += "PRIMARY KEY("+zu_name+")"
+      print (zutabeak)
+
+      mysql.create_t(zutabeak,izen_tabla)
+  if a == "2":
+      zu_name = "none"
   print("\n")
-  zutabeak += "PRIMARY KEY("+zu_name+")"
-  print(zutabeak)
-  print(izen_tabla)
-  mysql.create_t(zutabeak,izen_tabla)
+  #print(zutabeak)
+  #print(izen_tabla)
+
+ if int(zent) == len(tabla_s) + 1:
+    for x in range(len(tabla_s)):
+      print("\t",x,".",tabla_s[x]['Tables_in_python'])
+    eza = input("aukeratu zutabea:")
+    mysql.delete_t(tabla_s[int(eza)]['Tables_in_python'])
+    print(tabla_s[int(eza)]['Tables_in_python'])
 
  else:
   print("ze nahi duzu?")
@@ -180,7 +204,19 @@ while True:
   print("\t2.config")
   cv = input("aukera:")
   if int(cv) == 1:
-     print("v")
+     print("\n")
+     print("aukeratu modu bat:")
+     tabla_des = mysql.describe_t(tabla_s[int(zent)]['Tables_in_python'])
+     lotura_iz = ""
+     lotura_da = ""
+     for x in range(len(tabla_des)):
+         print("\t.",tabla_des[x]["Field"])
+         tabla_sel = mysql.select_t(tabla_s[int(zent)]['Tables_in_python'])
+         for p in range(len(tabla_sel)):
+             print("\t  ",p,"* ",tabla_sel[p][tabla_des[x]["Field"]])
+     print("\n")
+     aukeratu = input("aukera:")
+     x = int(aukeratu)
   if int(cv) == 2:
      tabla_des = mysql.describe_t(tabla_s[int(zent)]['Tables_in_python'])
      print("\n")
@@ -190,3 +226,4 @@ while True:
          print("\t",[x],".Izena:",tabla_des[x]["Field"],"; Karaktere_Mota:",tabla_des[x]["Type"],"; NULL:",tabla_des[x]["Null"],"; Giltza:",tabla_des[x]["Key"],"; Defektuzko_izena:",tabla_des[x]["Default"],"; Gehigarria:",tabla_des[x]["Extra"])
      print("\t",[len(tabla_des)],".sortu zutabe berri bat:")
      print("\n")
+     input("")

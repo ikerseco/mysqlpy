@@ -110,9 +110,7 @@ def defektuzko(izen):
     if izen == "2":
       return "CURRENT_TIMESTAMP"
 
-pata = "dwd,dwd,wdd"
-array = explot(pata,",")
-print(array.arry())
+
 #programa
 print("Zure datubasera konektatzen:\n")
 db = input("\t*jarri zure databasearen izena:")
@@ -182,7 +180,9 @@ while True:
       print(pry)
       zu_name = input("zutabearen izena:")
       zutabeak += "PRIMARY KEY("+zu_name+")"
-      print (zutabeak)
+      pata = "dwd,dwd,wdd"
+      array = explot(zutabeak,",")
+      print(array.arry())
 
       mysql.create_t(zutabeak,izen_tabla)
   if a == "2":

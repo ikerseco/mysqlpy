@@ -180,11 +180,20 @@ while True:
       print(pry)
       zu_name = input("zutabearen izena:")
       zutabeak += "PRIMARY KEY("+zu_name+")"
-      pata = "dwd,dwd,wdd"
-      array = explot(zutabeak,",")
-      print(array.arry())
-
-      mysql.create_t(zutabeak,izen_tabla)
+      auto = input("auto increment:")
+      print("\t1.bai")
+      print("\t2.ez")
+      if int(auto) == 1:
+       pata = "dwd,dwd,wdd"
+       explots = explot(zutabeak,",")
+       array = explots.arry()
+       print(len(array))
+       for j in range(len(array)):
+           print(array[j])
+           if array[j] in zu_name:
+               print(array[j])
+      if int(auto) == 2:
+       mysql.create_t(zutabeak,izen_tabla)
   if a == "2":
       zu_name = "none"
   print("\n")

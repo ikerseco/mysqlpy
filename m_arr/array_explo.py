@@ -19,13 +19,28 @@ class explot(object):
              lotura += letrak
         return cont
 
+    def search(self,array,hitza):
+      print(array)
+      #print(hitza)
+      lotura = ""
+      for x in range(len(array)):
+        for t in range(len(array[x])):
+          lotura += array[x][t]
+          if lotura == hitza:
+           print(array[x])
+           lotura = ""
+          else:
+            if len(lotura) == len(hitza):
+             lotura = ""
+          if array[x][t] == " ":
+             lotura = ""
 
-datuak = "kaixo , ixo , muturra"
-#string = input("karakterea:")
-#emaitza =  explot(datuak,string)
-#print(emaitza.datuak,emaitza.string)
-#print(len(datuak))
-#print(emaitza.arry())
-def kaixo():
-  return(kaixo)
-  
+
+print("kaixo")
+datuak = "kaixo ta ixo ,ixo gaur mendira noa eguna pasatxera,ixo muturra"
+string = input("karakterea:")
+emaitza =  explot(datuak,string)
+array = emaitza.arry()
+emaitza.search(array,"ixo")
+
+

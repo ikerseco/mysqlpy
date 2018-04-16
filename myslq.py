@@ -109,6 +109,8 @@ def defektuzko(izen):
       return di
     if izen == "2":
       return "CURRENT_TIMESTAMP"
+    if izen == "3":
+        return ""
 
 
 #programa
@@ -117,14 +119,15 @@ db = input("\t*jarri zure databasearen izena:")
 user = input("\t*user:")
 password = input("\t*password:")
 host = input("\t*host:") 
-mysql = data_base( "root","", "python", "localhost")
+mysql = data_base( "cine","Art&co#2009",db, "works.artycomultimedia.com")
 mysql.conexioa()
+dbs = "Tables_in_" + db 
 while True:
  tabla_s = mysql.show_t()
  print("\n")
  print("Tablak")
  for x in range(len(tabla_s)):
-     print("\t",x,".",tabla_s[x]['Tables_in_python'])
+     print("\t",x,".",tabla_s[x][dbs])
  print("\t",len(tabla_s),".tabla bat sortu")
  print("\t",len(tabla_s) + 1,".tabla bat ezabatu")
  zent = input("haukeratu tabla bat:")
@@ -164,9 +167,15 @@ while True:
      print("\t2.CURRENT_TIMESTAMP")
      print("\t3.ez")
      aukerDF = input("aukera:")
-     if aukerDF != "3":
+     if aukerDF == "1":
       d = defektuzko(aukerDF)
       print(d)
+      data[3]['Funtzioa'] = "DEFAULT" + " '" + d + "'"
+     if aukerDF == "2":
+      d = defektuzko(aukerDF)
+      data[3]['Funtzioa'] = d
+     if aukerDF == "3":
+      d = defektuzko(aukerDF)
       data[3]['Funtzioa'] = d
      print("\n")
      zutabeak += " " + data[0]['Funtzioa'] +" "+ data[1]['Funtzioa'] +" "+ data[2]['Funtzioa'] +" "+ data[3]['Funtzioa'] +","
@@ -180,18 +189,25 @@ while True:
       print(pry)
       zu_name = input("zutabearen izena:")
       zutabeak += "PRIMARY KEY("+zu_name+")"
+      print(zutabeak)
       auto = input("auto increment:")
       print("\t1.bai")
       print("\t2.ez")
       if int(auto) == 1:
-       pata = "dwd,dwd,wdd"
        explots = explot(zutabeak,",")
        array = explots.arry()
-       print(len(array))
+       string = ""
+       search_arr = explots.search(array,"id")
        for j in range(len(array)):
-           print(array[j])
-           if array[j] in zu_name:
-               print(array[j])
+           print(search_arr[0])
+           if j == search_arr[0]:
+               array[j] += "AUTO_INCREMENT"
+           if j != len(array) - 1:
+               string += array[j] + "," 
+           if j == len(array) - 1:
+               string += array[j]
+       print(string)
+       mysql.create_t(string,izen_tabla)
       if int(auto) == 2:
        mysql.create_t(zutabeak,izen_tabla)
   if a == "2":
@@ -202,12 +218,13 @@ while True:
 
  if int(zent) == len(tabla_s) + 1:
     for x in range(len(tabla_s)):
-      print("\t",x,".",tabla_s[x]['Tables_in_python'])
+      print("\t",x,".",tabla_s[x][dbs])
     eza = input("aukeratu zutabea:")
-    mysql.delete_t(tabla_s[int(eza)]['Tables_in_python'])
-    print(tabla_s[int(eza)]['Tables_in_python'])
+    mysql.delete_t(tabla_s[int(eza)][dbs])
+    print(tabla_s[int(eza)][dbs])
 
  else:
+ # mysql = data_base( "cine","Art&co#2009",db, "works.artycomultimedia.com")
   print("ze nahi duzu?")
   print("\t1.visual")
   print("\t2.config")
@@ -215,19 +232,19 @@ while True:
   if int(cv) == 1:
      print("\n")
      print("aukeratu modu bat:")
-     tabla_des = mysql.describe_t(tabla_s[int(zent)]['Tables_in_python'])
+     tabla_des = mysql.describe_t(tabla_s[int(zent)][dbs])
      lotura_iz = ""
      lotura_da = ""
      for x in range(len(tabla_des)):
          print("\t.",tabla_des[x]["Field"])
-         tabla_sel = mysql.select_t(tabla_s[int(zent)]['Tables_in_python'])
+         tabla_sel = mysql.select_t(tabla_s[int(zent)][dbs])
          for p in range(len(tabla_sel)):
-             print("\t  ",p,"* ",tabla_sel[p][tabla_des[x]["Field"]])
+             print("\t  ",p,"* ",str(tabla_sel[p][tabla_des[x]["Field"]]))
      print("\n")
      aukeratu = input("aukera:")
      x = int(aukeratu)
   if int(cv) == 2:
-     tabla_des = mysql.describe_t(tabla_s[int(zent)]['Tables_in_python'])
+     tabla_des = mysql.describe_t(tabla_s[int(zent)][dbs])
      print("\n")
      print("Zutabeak:")
      #print(tabla_des)

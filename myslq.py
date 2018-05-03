@@ -74,20 +74,31 @@ class data_base(object):
             result = cursor.fetchall()
             return result
     
+
+    
     def create_t(self,datuak,t_izena):
         with self.conec.cursor() as cursor:
             try:
-                data = "CREATE TABLE "+t_izena+ "( " + datuak + ") ENGINE = InnoDB;"
+                data = "CREATE TABLE "+t_izena+" (" + datuak + ") ENGINE = InnoDB;"
                 print(data)
                 cursor.execute(data)
                 return("zure tabla sortu egin da zorionak!!!")
             except ValueError:               
                 return("arazo bat egon da zure tabla sortzean!!!")
-   
-    def delete_t(self,datuak):
+
+    def insert_t(self,t_izena,datuak,value):
         with self.conec.cursor() as cursor:
             try:
-             data =  "DROP TABLE IF EXISTS " + datuak
+                data = "insert into "+t_izena + " (" + datuak + ") values " + value + ";"
+                print(data)  
+                cursor.execute(data)
+            except ValueError:
+                print("datuak ezdira sartu")
+   
+    def delete_t(self,data):
+        with self.conec.cursor() as cursor:
+            try:
+             data =  "DROP TABLE IF EXISTS " + data
              cursor.execute(data)
             except ValueError:
              print("datu basearekin arazo bat dago.")
@@ -119,10 +130,10 @@ db = input("\t*jarri zure databasearen izena:")
 user = input("\t*user:")
 password = input("\t*password:")
 host = input("\t*host:") 
-mysql = data_base( "cine","Art&co#2009",db, "works.artycomultimedia.com")
-mysql.conexioa()
-dbs = "Tables_in_" + db 
 while True:
+ mysql = data_base( "root","",db, "localhost")
+ mysql.conexioa()
+ dbs = "Tables_in_" + db 
  tabla_s = mysql.show_t()
  print("\n")
  print("Tablak")
@@ -140,7 +151,8 @@ while True:
   pry = ""
   for x in range(int(kanti)):
      print("\n")
-     izen_zutabea = input("jarri zutabearen izena:")
+     print(x + 1 ,"-zutabea")
+     izen_zutabea = input("-jarri zutabearen izena:")
      data[0]['Funtzioa'] = izen_zutabea
      print("\n")
      print("-Aukeratu atributo bat:")
@@ -179,20 +191,21 @@ while True:
       data[3]['Funtzioa'] = d
      print("\n")
      zutabeak += " " + data[0]['Funtzioa'] +" "+ data[1]['Funtzioa'] +" "+ data[2]['Funtzioa'] +" "+ data[3]['Funtzioa'] +","
-     pry += "\t*"+data[0]['Funtzioa'] + "\n"
+     pry += "\t*"+data[0]['Funtzioa']
   print("-Prymari key:")
   print("\t1.BAI")
   print("\t2.EZ")
   a = input("aukera:")
   if a == "1":
+      print("\n")
       print("zutabeak:")
       print(pry)
       zu_name = input("zutabearen izena:")
       zutabeak += "PRIMARY KEY("+zu_name+")"
-      print(zutabeak)
-      auto = input("auto increment:")
+      print("\n")
       print("\t1.bai")
       print("\t2.ez")
+      auto = input("auto increment:")
       if int(auto) == 1:
        explots = explot(zutabeak,",")
        array = explots.arry()
@@ -209,6 +222,7 @@ while True:
        print(string)
        mysql.create_t(string,izen_tabla)
       if int(auto) == 2:
+       print("ez auto")
        mysql.create_t(zutabeak,izen_tabla)
   if a == "2":
       zu_name = "none"
@@ -222,7 +236,6 @@ while True:
     eza = input("aukeratu zutabea:")
     mysql.delete_t(tabla_s[int(eza)][dbs])
     print(tabla_s[int(eza)][dbs])
-
  else:
  # mysql = data_base( "cine","Art&co#2009",db, "works.artycomultimedia.com")
   print("ze nahi duzu?")
@@ -239,10 +252,40 @@ while True:
          print("\t.",tabla_des[x]["Field"])
          tabla_sel = mysql.select_t(tabla_s[int(zent)][dbs])
          for p in range(len(tabla_sel)):
-             print("\t  ",p,"* ",str(tabla_sel[p][tabla_des[x]["Field"]]))
+             print("\t  ",p,"* ",tabla_sel[p][tabla_des[x]["Field"]])
+     print("\t. (inset) datuak sartu") 
      print("\n")
      aukeratu = input("aukera:")
-     x = int(aukeratu)
+     if aukeratu == "insert":
+         fyle = ""
+         value = ""
+         dat = ""
+         auto_increment = 1
+         for t in range(len(tabla_des)):
+             fyle += tabla_des[t]["Field"] + "," 
+             if tabla_des[t]["Extra"] == "auto_increment":
+                  auto_increment *= 0
+             else:
+                  auto_increment *= 1 
+             print(auto_increment)
+         while True:
+             if dat == "exit":
+                 break
+             value += "("
+             print(dat) 
+             for o in range(len(tabla_des)):
+                 if dat == "exit":
+                     dat = "exit"
+                 if tabla_des[o]["Extra"] != "auto_increment":
+                      print(tabla_des[o]["Field"]+"("+tabla_des[o]["Type"]+"):")
+                      dat = input("\t* sartu datu bat :")
+                      value += "'" + dat + "',"
+                      if tabla_des[len(tabla_des)-1]["Type"] == tabla_des[o]["Type"]:
+                         value = value[:-1] + "),"
+                 else :
+                     dat = "NULL"
+                     value +=  dat + ","
+         data = mysql.insert_t(tabla_s[int(zent)][dbs],fyle[:-1],value[:-22])
   if int(cv) == 2:
      tabla_des = mysql.describe_t(tabla_s[int(zent)][dbs])
      print("\n")

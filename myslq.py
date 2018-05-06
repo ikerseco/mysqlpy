@@ -1,6 +1,8 @@
 import pymysql.cursors
 import json
 from m_arr.array_explo import explot
+from inser_t.insert import read
+#from inser_t.insert 
 """
 print("Zure datubasera konektatzen:\n")
 dbi = input("\t*jarri zure databasearen izena:")
@@ -80,7 +82,6 @@ class data_base(object):
         with self.conec.cursor() as cursor:
             try:
                 data = "CREATE TABLE "+t_izena+" (" + datuak + ") ENGINE = InnoDB;"
-                print(data)
                 cursor.execute(data)
                 return("zure tabla sortu egin da zorionak!!!")
             except ValueError:               
@@ -89,9 +90,9 @@ class data_base(object):
     def insert_t(self,t_izena,datuak,value):
         with self.conec.cursor() as cursor:
             try:
-                data = "insert into "+t_izena + " (" + datuak + ") values " + value + ";"
-                print(data)  
-                cursor.execute(data)
+                data = "insert into "+t_izena +" (" + datuak + ") values " + value + ";"
+                print(data)
+               # cursor.execute(data)
             except ValueError:
                 print("datuak ezdira sartu")
    
@@ -125,6 +126,7 @@ def defektuzko(izen):
 
 
 #programa
+print(str(2))
 print("Zure datubasera konektatzen:\n")
 db = input("\t*jarri zure databasearen izena:")
 user = input("\t*user:")
@@ -191,7 +193,7 @@ while True:
       data[3]['Funtzioa'] = d
      print("\n")
      zutabeak += " " + data[0]['Funtzioa'] +" "+ data[1]['Funtzioa'] +" "+ data[2]['Funtzioa'] +" "+ data[3]['Funtzioa'] +","
-     pry += "\t*"+data[0]['Funtzioa']
+     pry += "\t*"+data[0]['Funtzioa']+"\n"
   print("-Prymari key:")
   print("\t1.BAI")
   print("\t2.EZ")
@@ -253,39 +255,23 @@ while True:
          tabla_sel = mysql.select_t(tabla_s[int(zent)][dbs])
          for p in range(len(tabla_sel)):
              print("\t  ",p,"* ",tabla_sel[p][tabla_des[x]["Field"]])
-     print("\t. (inset) datuak sartu") 
-     print("\n")
+     print("\t. (insert) datuak sartu") 
      aukeratu = input("aukera:")
      if aukeratu == "insert":
          fyle = ""
-         value = ""
-         dat = ""
-         auto_increment = 1
-         for t in range(len(tabla_des)):
-             fyle += tabla_des[t]["Field"] + "," 
-             if tabla_des[t]["Extra"] == "auto_increment":
-                  auto_increment *= 0
-             else:
-                  auto_increment *= 1 
-             print(auto_increment)
-         while True:
-             if dat == "exit":
-                 break
-             value += "("
-             print(dat) 
-             for o in range(len(tabla_des)):
-                 if dat == "exit":
-                     dat = "exit"
-                 if tabla_des[o]["Extra"] != "auto_increment":
-                      print(tabla_des[o]["Field"]+"("+tabla_des[o]["Type"]+"):")
-                      dat = input("\t* sartu datu bat :")
-                      value += "'" + dat + "',"
-                      if tabla_des[len(tabla_des)-1]["Type"] == tabla_des[o]["Type"]:
-                         value = value[:-1] + "),"
-                 else :
-                     dat = "NULL"
-                     value +=  dat + ","
-         data = mysql.insert_t(tabla_s[int(zent)][dbs],fyle[:-1],value[:-22])
+         for j in range(len(tabla_des)):
+             fyle += tabla_des[j]["Field"] + ","
+         print(fyle)
+         cont = []
+         col = "" 
+         for p in range(len(tabla_sel)):
+             for x in range(len(tabla_des)):
+                 col += str(tabla_sel[p][tabla_des[x]["Field"]]) + ","
+             cont.append(col[:-1])
+             col = ""
+         fitxero = tabla_s[int(zent)][dbs] +".od.csv"
+         reads = read(fitxero,"D:\gitpro\mysqlpy\oard",fyle,cont)
+         r = reads.idatzi()
   if int(cv) == 2:
      tabla_des = mysql.describe_t(tabla_s[int(zent)][dbs])
      print("\n")

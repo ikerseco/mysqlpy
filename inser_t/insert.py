@@ -14,18 +14,23 @@ class read(object):
     def val(self):
         os.chdir(self.url)
         fichategia = open(self.fitxategia,'rt')
-        irakurri =  fichategia.read()
-        return irakurri
+        ""#"insert into "+t_izena +" (" + datuak + ") values " + value + ";"
+        value = "("+self.tabla+") values "
+        ar = fichategia.readlines()
+        for k in range(len(ar)):
+            if k != 0:
+                 value += "(" + ar[k].rstrip('\n')+ "),"
+        return value[:-1]
+        
+
     def idatzi(self):
          os.chdir(self.url)
-         print(self.fitxategia)
          fi = self.fitxategia
          fichategia = open(fi,'wt')
          fichategia.write(self.tabla + "\n")
          if self.zutabeak != []:
              for x in range(len(self.zutabeak)):
                  fichategia.write(self.zutabeak[x] + "\n")
-         print(len(self.zutabeak))
          fichategia.close()
     
 
@@ -38,5 +43,3 @@ class read(object):
 #fichategial = open("inser.od.csv",'rt')
 #irakurri =  fichategial.read()
 #print(irakurri)
-
-

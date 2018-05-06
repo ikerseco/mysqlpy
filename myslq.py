@@ -87,14 +87,22 @@ class data_base(object):
             except ValueError:               
                 return("arazo bat egon da zure tabla sortzean!!!")
 
-    def insert_t(self,t_izena,datuak,value):
+    def insert_t(self,t_izena,datuak):
+        #¿Realmente desea ejecutar "DELETE FROM `proba` WHERE `proba`.`id` = 1"?
         with self.conec.cursor() as cursor:
             try:
-                data = "insert into "+t_izena +" (" + datuak + ") values " + value + ";"
-                print(data)
+                cursor.execute()
+                datd = "INSERT INTO " + t_izena + " " + datuak
+                print(datd)
                # cursor.execute(data)
             except ValueError:
                 print("datuak ezdira sartu")
+
+
+    def dlet(self,t_izena):
+        with self.conec.cursor()  as cursor:
+            deli = "DELETE FROM pertsonak;"
+            cursor.execute(deli)
    
     def delete_t(self,data):
         with self.conec.cursor() as cursor:
@@ -212,7 +220,7 @@ while True:
        explots = explot(zutabeak,",")
        array = explots.arry()
        string = ""
-       search_arr = explots.search(array,"id")
+       search_arr = explots.search(array,zu_name)
        for j in range(len(array)):
            print(search_arr[0])
            if j == search_arr[0]:
@@ -261,7 +269,6 @@ while True:
          fyle = ""
          for j in range(len(tabla_des)):
              fyle += tabla_des[j]["Field"] + ","
-         print(fyle)
          cont = []
          col = "" 
          for p in range(len(tabla_sel)):
@@ -270,8 +277,15 @@ while True:
              cont.append(col[:-1])
              col = ""
          fitxero = tabla_s[int(zent)][dbs] +".od.csv"
-         reads = read(fitxero,"D:\gitpro\mysqlpy\oard",fyle,cont)
+         reads = read(fitxero,"D:\gitpro\mysqlpy\oard",fyle[:-1],cont)
          r = reads.idatzi()
+         ja = input("(sartu) idatzi:")
+         while (ja != "sartu"): 
+             ja = input("(sartu) idatzi:")
+         val = reads.val()
+         print (val)
+         delete = mysql.dlet(tabla_s[int(zent)][dbs])
+         #inssert = mysql.insert_t(tabla_s[int(zent)][dbs],val)
   if int(cv) == 2:
      tabla_des = mysql.describe_t(tabla_s[int(zent)][dbs])
      print("\n")

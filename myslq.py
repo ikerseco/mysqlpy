@@ -99,9 +99,9 @@ class data_base(object):
                 print("datuak ezdira sartu")
 
 
-    def dlet(self,t_izena):
+    def dlet(self,tizena):
         with self.conec.cursor()  as cursor:
-            deli = "DELETE FROM pertsonak;"
+            deli = "DELETE FROM "+tizena+";"
             cursor.execute(deli)
    
     def delete_t(self,data):
@@ -277,14 +277,13 @@ while True:
              cont.append(col[:-1])
              col = ""
          fitxero = tabla_s[int(zent)][dbs] +".od.csv"
-         reads = read(fitxero,"D:\gitpro\mysqlpy\oard",fyle[:-1],cont)
+         reads = read(fitxero,"C:\\users\Admin\Desktop\python\mysqlpy\oard",fyle[:-1],cont)
          r = reads.idatzi()
          ja = input("(sartu) idatzi:")
          while (ja != "sartu"): 
              ja = input("(sartu) idatzi:")
          val = reads.val()
          print (val)
-         delete = mysql.dlet(tabla_s[int(zent)][dbs])
          #inssert = mysql.insert_t(tabla_s[int(zent)][dbs],val)
   if int(cv) == 2:
      tabla_des = mysql.describe_t(tabla_s[int(zent)][dbs])

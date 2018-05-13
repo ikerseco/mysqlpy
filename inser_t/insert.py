@@ -14,13 +14,16 @@ class read(object):
     def val(self):
         os.chdir(self.url)
         fichategia = open(self.fitxategia,'rt')
+        print(self.fitxategia)
         ""#"insert into "+t_izena +" (" + datuak + ") values " + value + ";"
         value = "("+self.tabla+") values "
         ar = fichategia.readlines()
         for k in range(len(ar)):
             if k != 0:
-                 value += "(" + ar[k].rstrip('\n')+ "),"
+                 value = "("+self.tabla+") values (" + ar[k].rstrip('\n')+ ")," 
+                 print(value)    
         return value[:-1]
+
         
 
     def idatzi(self):

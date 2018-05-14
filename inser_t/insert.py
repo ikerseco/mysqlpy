@@ -18,7 +18,8 @@ class read(object):
         value = "("+self.tabla+") values "
         ar = fichategia.readlines()
         explots = explot(self.tabla,",")
-        arrayt = explots.arry()
+        arrayt = explots.arry() 
+        cont = []
         for k in range(len(ar)):
             if k != 0:
                  value = "("+self.tabla+") values (" +ar[k].rstrip('\n')+") ON DUPLICATE KEY UPDATE " 
@@ -27,8 +28,9 @@ class read(object):
                  for t in range(len(arrayt)):
                      value += arrayt[t] +"="+arrayv[t]+","
                  print(value)
-                    
-        return value
+                 value = value[:-1]
+                 cont.append(value)   
+        return cont
 
         
 

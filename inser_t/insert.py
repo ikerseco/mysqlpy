@@ -1,7 +1,6 @@
 import os
-
-
-
+from m_arr.array_explo import explot
+import json
 
 
 class read(object):
@@ -18,11 +17,18 @@ class read(object):
         ""#"insert into "+t_izena +" (" + datuak + ") values " + value + ";"
         value = "("+self.tabla+") values "
         ar = fichategia.readlines()
+        explots = explot(self.tabla,",")
+        arrayt = explots.arry()
         for k in range(len(ar)):
             if k != 0:
-                 value = "("+self.tabla+") values (" + ar[k].rstrip('\n')+ ")," 
-                 print(value)    
-        return value[:-1]
+                 value = "("+self.tabla+") values (" +ar[k].rstrip('\n')+") ON DUPLICATE KEY UPDATE " 
+                 explotsx = explot(ar[k].rstrip('\n'),",")
+                 arrayv = explotsx.arry()
+                 for t in range(len(arrayt)):
+                     value += arrayt[t] +"="+arrayv[t]+","
+                 print(value)
+                    
+        return value
 
         
 

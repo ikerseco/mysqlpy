@@ -52,7 +52,8 @@ class data_base(object):
                                      password = self.password,
                                      db = self.db,
                                      charset = 'utf8mb4',
-                                     cursorclass=pymysql.cursors.DictCursor)
+                                     cursorclass=pymysql.cursors.DictCursor,
+                                     autocommit=True)
         self.conec = connection
 
     def show_t(self):
@@ -69,7 +70,7 @@ class data_base(object):
             cursor.execute(sql_co) 
             result = cursor.fetchall()
             return result
-            cursor.close()
+            
 
     def select_t(self,data):
         with self.conec.cursor() as cursor:
@@ -77,7 +78,7 @@ class data_base(object):
             cursor.execute(sql_co) 
             result = cursor.fetchall()
             return result
-            cursor.close()
+            
     
 
     
@@ -87,7 +88,7 @@ class data_base(object):
                 data = "CREATE TABLE "+t_izena+" (" + datuak + ") ENGINE = InnoDB;"
                 print(data)
                 cursor.execute(data)
-                cursor.close()
+                
                 return("zure tabla sortu egin da zorionak!!!")
             except ValueError:               
                 return("arazo bat egon da zure tabla sortzean!!!")
@@ -96,11 +97,11 @@ class data_base(object):
         #¿Realmente desea ejecutar "DELETE FROM `proba` WHERE `proba`.`id` = 1"?
         with self.conec.cursor() as cursor:
             try:
-                datd = "INSERT INTO " + t_izena + " " + datuak
+                datd = "INSERT INTO " + t_izena + " " + datuak + ";"
                 print(datd)
                 cursor.execute(datd)
                 #cursor.execute("INSERT INTO animal  values ('1','ga','23') ON DUPLICATE KEY UPDATE id='1',name='ga',tamano='23';")
-                cursor.close()
+                self.conec.commit()
             except ValueError:
                 print("datuak ezdira sartu")
 
@@ -116,7 +117,7 @@ class data_base(object):
             try:
              data =  "DROP TABLE IF EXISTS " + data
              cursor.execute(data)
-             cursor.close()
+             self.conec.commit()
             except ValueError:
              print("datu basearekin arazo bat dago.")
 
@@ -163,7 +164,7 @@ db = input("\t*jarri zure databasearen izena:")
 user = input("\t*user:")
 password = input("\t*password:")
 host = input("\t*host:") 
-mysql = data_base( "root","",db, "localhost")
+mysql = data_base( "sql7238558","XIxNCXTaLP",db, "sql7.freemysqlhosting.net")
 mysql.conexioa()
 while True:
  dbs = "Tables_in_" + db 

@@ -61,13 +61,15 @@ class data_base(object):
          cursor.execute(sql_show)
          result = cursor.fetchall()
          return result
+         cursor.close()
                                      
     def describe_t(self,izena):
         with self.conec.cursor() as cursor:
             sql_co = "describe " + izena
             cursor.execute(sql_co) 
             result = cursor.fetchall()
-            return result 
+            return result
+            cursor.close()
 
     def select_t(self,data):
         with self.conec.cursor() as cursor:
@@ -75,6 +77,7 @@ class data_base(object):
             cursor.execute(sql_co) 
             result = cursor.fetchall()
             return result
+            cursor.close()
     
 
     
@@ -82,7 +85,9 @@ class data_base(object):
         with self.conec.cursor() as cursor:
             try:
                 data = "CREATE TABLE "+t_izena+" (" + datuak + ") ENGINE = InnoDB;"
+                print(data)
                 cursor.execute(data)
+                cursor.close()
                 return("zure tabla sortu egin da zorionak!!!")
             except ValueError:               
                 return("arazo bat egon da zure tabla sortzean!!!")
@@ -91,10 +96,11 @@ class data_base(object):
         #¿Realmente desea ejecutar "DELETE FROM `proba` WHERE `proba`.`id` = 1"?
         with self.conec.cursor() as cursor:
             try:
-                cursor.execute()
                 datd = "INSERT INTO " + t_izena + " " + datuak
                 print(datd)
-               # cursor.execute(data)
+                cursor.execute(datd)
+                #cursor.execute("INSERT INTO animal  values ('1','ga','23') ON DUPLICATE KEY UPDATE id='1',name='ga',tamano='23';")
+                cursor.close()
             except ValueError:
                 print("datuak ezdira sartu")
 
@@ -103,12 +109,14 @@ class data_base(object):
         with self.conec.cursor()  as cursor:
             deli = "DELETE FROM "+tizena+";"
             cursor.execute(deli)
+            cursor.close()
    
     def delete_t(self,data):
         with self.conec.cursor() as cursor:
             try:
              data =  "DROP TABLE IF EXISTS " + data
              cursor.execute(data)
+             cursor.close()
             except ValueError:
              print("datu basearekin arazo bat dago.")
 
@@ -131,6 +139,21 @@ def defektuzko(izen):
       return "CURRENT_TIMESTAMP"
     if izen == "3":
         return ""
+def tables(describe):
+    data = ""
+    key = ""
+    print(describe)
+    for x in range(len(describe)):
+        if describe[x]["Key"] == "PRI":
+            key += "PRIMARY KEY ("+describe[x]["Field"]+")"
+        if describe[x]["Extra"] == "auto_increment":
+            data += describe[x]["Field"] + " " +describe[x]["Type"] + " "+describe[x]["Extra"] + " ,"
+        else: 
+           data += describe[x]["Field"] + " " +describe[x]["Type"] + "," 
+    tosoa = data + key
+    print(tosoa)
+    return tosoa
+    
 
 
 #programa
@@ -140,9 +163,9 @@ db = input("\t*jarri zure databasearen izena:")
 user = input("\t*user:")
 password = input("\t*password:")
 host = input("\t*host:") 
+mysql = data_base( "root","",db, "localhost")
+mysql.conexioa()
 while True:
- mysql = data_base( "root","",db, "localhost")
- mysql.conexioa()
  dbs = "Tables_in_" + db 
  tabla_s = mysql.show_t()
  print("\n")
@@ -283,8 +306,12 @@ while True:
          while (ja != "sartu"): 
              ja = input("(sartu) idatzi:")
          val = reads.val()
-         print (val)
-         #inssert = mysql.insert_t(tabla_s[int(zent)][dbs],val)
+         print(val)
+         delins = mysql.delete_t(tabla_s[int(zent)][dbs])
+         tk = tables(tabla_des)
+         print(tk)
+         ck = mysql.create_t(tk,tabla_s[int(zent)][dbs])
+         insert = mysql.insert_t(tabla_s[int(zent)][dbs] ,val)
   if int(cv) == 2:
      tabla_des = mysql.describe_t(tabla_s[int(zent)][dbs])
      print("\n")

@@ -1,5 +1,6 @@
 import os
 from m_arr.array_explo import explot
+from m_arr.array_explo import implot
 import json
 
 
@@ -17,20 +18,16 @@ class read(object):
         ""#"insert into "+t_izena +" (" + datuak + ") values " + value + ";"
         value = "("+self.tabla+") values "
         ar = fichategia.readlines()
-        explots = explot(self.tabla,",")
-        arrayt = explots.arry() 
-        cont = []
         for k in range(len(ar)):
             if k != 0:
-                 value = "("+self.tabla+") values (" +ar[k].rstrip('\n')+") ON DUPLICATE KEY UPDATE " 
-                 explotsx = explot(ar[k].rstrip('\n'),",")
-                 arrayv = explotsx.arry()
-                 for t in range(len(arrayt)):
-                     value += arrayt[t] +"="+arrayv[t]+","
-                 print(value)
-                 value = value[:-1]
-                 cont.append(value)   
-        return cont
+                 emaitza =  explot(ar[k].rstrip('\n'),",")
+                 array = emaitza.arry()
+                 print(array)
+                 imp = implot(array,",")
+                 mo = imp.mount("':'")
+                 print(mo)
+                 value += "(" +mo+"),"  
+        return value[:-1]
 
         
 

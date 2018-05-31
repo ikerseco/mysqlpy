@@ -116,11 +116,35 @@ class data_base(object):
         with self.conec.cursor() as cursor:
             try:
              data =  "DROP TABLE IF EXISTS " + data
+             print(data)
              cursor.execute(data)
              self.conec.commit()
             except ValueError:
              print("datu basearekin arazo bat dago.")
-
+    
+    def relaion(self,tabla1,tabla2,forey,pryma,rel):
+        print(pryma)
+        print(forey)
+        print(tabla1)
+        print(tabla2)
+        with self.conec.cursor() as cursor:
+          try:
+            if rel == "o:m":
+                 data = "ALTER TABLE `"+tabla2+"` ADD INDEX(`"+forey+"`);"
+                 cursor.execute(data)
+                 data = "ALTER TABLE "+tabla2+" ADD FOREIGN KEY ("+forey+") REFERENCES "+tabla1+" ("+pryma+");"
+                 cursor.execute(data)
+                 cursor.close()
+                 self.conec.commit()
+            if rel == "m:m":
+                 data = "ALTER TABLE `"+tabla2+"` ADD INDEX("+forey+");"
+                 cursor.execute(data)
+                 data = "ALTER TABLE "+tabla2+" ADD FOREIGN KEY ("+forey+") REFERENCES "+tabla1+" ("+pryma+");"
+                 cursor.execute(data)
+                 cursor.close()
+                 self.conec.commit()
+          except ValueError:
+                 print("datu basearekin arazo bat dago.")
 #json
 data = [{'izena':'name','Funtzioa':''},{'izena':'atributoa','Funtzioa':''},{'izena':'NUll','Funtzioa':''},{'izena':'DEFAULT','Funtzioa':''}]
 #funtzioak
@@ -164,7 +188,7 @@ db = input("\t*jarri zure databasearen izena:")
 user = input("\t*user:")
 password = input("\t*password:")
 host = input("\t*host:") 
-mysql = data_base( "sql7238558","XIxNCXTaLP",db, "sql7.freemysqlhosting.net")
+mysql = data_base( "root","",db, "127.0.0.1")
 mysql.conexioa()
 while True:
  dbs = "Tables_in_" + db 
@@ -270,8 +294,90 @@ while True:
     eza = input("aukeratu zutabea:")
     mysql.delete_t(tabla_s[int(eza)][dbs])
     print(tabla_s[int(eza)][dbs])
+ if int(zent) == len(tabla_s) + 2:
+     print("\n")
+     print("aukeratu erlazio modu bat:")
+     print("\t1* o:m:")
+     print("\t2* m:m")
+     print("\t3* o:o")
+     au = input("aukeratu bat:")
+     if int(au) == 1:
+         tabla_s = mysql.show_t()
+         print("\n")
+         print("tablak1:")
+         for x in range(len(tabla_s)):
+             print("\t*",x,tabla_s[x][dbs])
+         au = input("prymarikey tabla aukeratu:")
+         tabla1 = tabla_s[int(au)][dbs]
+         print("\n")
+         tablades1 = mysql.describe_t(tabla1)
+         if tablades1 == " ":
+             print("ezdaude datuak")
+         print(tabla1,":")
+         for p in range(len(tablades1)):
+             print("\t*",p,tablades1[p]["Field"]) 
+         au = input("prymarykey:")
+         pry = tablades1[int(au)]["Field"]
+         print("\n")
+         print("tablak2:")
+         for t in range(len(tabla_s)):
+             print("\t*",t,tabla_s[t][dbs])
+         au = input("forenkey tabla aukeratu:")
+         tabla2 = tabla_s[int(au)][dbs]
+         print("\n")
+         print(tabla2,":")
+         tablades2 = mysql.describe_t(tabla2)
+         for p in range(len(tablades2)):
+             print("\t*",p,tablades2[p]["Field"]) 
+         ak = input("forenkay:")
+         fore = tablades2[int(ak)]["Field"]
+         re =  mysql.relaion(tabla1,tabla2,pry,fore,"o:m")
+     if int(au) == 2:
+         prymari = []
+         tablak = []
+         forenkay = []
+         print("m:m")
+         tz = input("primaykey erlazio kantitatea:")
+         tabla_s = mysql.show_t()
+         for x in range(int(tz)):
+             print("\n")
+             print(x,"* tablakpry:")
+             for x in range(len(tabla_s)):
+                 print("\t*",x,tabla_s[x][dbs])
+             au = input("prymarikey tabla aukeratu:")
+             tablapry = tabla_s[int(au)][dbs]
+             tablak.append(tablapry)
+             print("\n")
+             tablades1 = mysql.describe_t(tablapry)
+             print(tablapry,":")
+             for p in range(len(tablades1)):
+                 print("\t*",p,tablades1[p]["Field"]) 
+             au = input("prymarykey:")
+             pry = tablades1[int(au)]["Field"]
+             prymari.append(pry)
+             print("\n")
+         #////////////
+         print("tablak2:")
+         for t in range(len(tabla_s)):
+             print("\t*",t,tabla_s[t][dbs])
+         au = input("forenkey tabla aukeratu:")
+         tabla2 = tabla_s[int(au)][dbs]
+         tablades2 = mysql.describe_t(tabla2)
+         for e in range(len(prymari)):
+             print("\n")
+             print(e,"forenkey ",tabla2,":")
+             for x in range(len(tablades2)):
+                 print("\t*",x,tablades2[x]["Field"])
+             au = input("aukeratu forenkay:")
+             frore = tablades2[int(au)]["Field"]
+             forenkay.append(frore)
+         print(prymari)
+         print(tablak)
+         print(forenkay)
+     if int(au) == 3:
+         print("o:o")
+     input("")
  else:
- # mysql = data_base( "cine","Art&co#2009",db, "works.artycomultimedia.com")
   print("ze nahi duzu?")
   print("\t1.visual")
   print("\t2.config")
@@ -301,17 +407,14 @@ while True:
              cont.append(col[:-1])
              col = ""
          fitxero = tabla_s[int(zent)][dbs] +".od.csv"
-         reads = read(fitxero,"C:\\users\Admin\Desktop\python\mysqlpy\oard",fyle[:-1],cont)
+         reads = read(fitxero,"C:\\Users\\web\\Desktop\\carpeta\\mysqlpy-master\\oard",fyle[:-1],cont)
          r = reads.idatzi()
          ja = input("(sartu) idatzi:")
          while (ja != "sartu"): 
              ja = input("(sartu) idatzi:")
          val = reads.val()
          print(val)
-         delins = mysql.delete_t(tabla_s[int(zent)][dbs])
-         tk = tables(tabla_des)
-         print(tk)
-         ck = mysql.create_t(tk,tabla_s[int(zent)][dbs])
+         delins = mysql.dlet(tabla_s[int(zent)][dbs])
          insert = mysql.insert_t(tabla_s[int(zent)][dbs] ,val)
   if int(cv) == 2:
      tabla_des = mysql.describe_t(tabla_s[int(zent)][dbs])

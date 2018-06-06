@@ -45,9 +45,6 @@ class implot(object):
     self.string = string
   
   def mount(self,dat):
-   print(self.array)
-   print(self.string)
-   print(dat)
    data = ""
    datC = []
    d = ""

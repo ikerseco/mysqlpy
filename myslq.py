@@ -1,6 +1,7 @@
 import pymysql.cursors
 import json
 from m_arr.array_explo import explot
+from m_arr.array_explo import implot
 from inser_t.insert import read
 #from inser_t.insert 
 """
@@ -88,7 +89,6 @@ class data_base(object):
                 data = "CREATE TABLE "+t_izena+" (" + datuak + ") ENGINE = InnoDB;"
                 print(data)
                 cursor.execute(data)
-                
                 return("zure tabla sortu egin da zorionak!!!")
             except ValueError:               
                 return("arazo bat egon da zure tabla sortzean!!!")
@@ -126,7 +126,6 @@ class data_base(object):
         print(pryma)
         print(forey)
         print(tabla1)
-        print(tabla2)
         with self.conec.cursor() as cursor:
           try:
             if rel == "o:m":
@@ -137,10 +136,16 @@ class data_base(object):
                  cursor.close()
                  self.conec.commit()
             if rel == "m:m":
-                 data = "ALTER TABLE `"+tabla2+"` ADD INDEX("+forey+");"
+                 implotf = implot(forey,",")
+                 fimpo = implotf.mount(" : ")
+                 tabla = len(tabla1)
+                 data = "ALTER TABLE `"+tabla1[tabla -1]+"` ADD INDEX("+fimpo+");"
                  cursor.execute(data)
-                 data = "ALTER TABLE "+tabla2+" ADD FOREIGN KEY ("+forey+") REFERENCES "+tabla1+" ("+pryma+");"
-                 cursor.execute(data)
+                 #data = "ALTER TABLE "+tabla2+" ADD FOREIGN KEY ("+forey+") REFERENCES "+tabla1+" ("+pryma+");"
+                 #cursor.execute(data)
+                 for x in range(len(tabla1) - 1):
+                     data = "ALTER TABLE "+tabla1[tabla -1]+" ADD FOREIGN KEY ("+forey[x]+") REFERENCES "+tabla1[x]+" ("+pryma[x]+");"
+                     cursor.execute(data)
                  cursor.close()
                  self.conec.commit()
           except ValueError:
@@ -362,6 +367,7 @@ while True:
              print("\t*",t,tabla_s[t][dbs])
          au = input("forenkey tabla aukeratu:")
          tabla2 = tabla_s[int(au)][dbs]
+         tablak.append(tabla2)
          tablades2 = mysql.describe_t(tabla2)
          for e in range(len(prymari)):
              print("\n")
@@ -371,9 +377,8 @@ while True:
              au = input("aukeratu forenkay:")
              frore = tablades2[int(au)]["Field"]
              forenkay.append(frore)
-         print(prymari)
-         print(tablak)
-         print(forenkay)
+         #def relaion(self,tabla1,tabla2,forey,pryma,rel):
+         re =  mysql.relaion(tablak,"",forenkay,prymari,"m:m")
      if int(au) == 3:
          print("o:o")
      input("")
